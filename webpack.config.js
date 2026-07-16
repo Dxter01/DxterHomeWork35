@@ -1,5 +1,16 @@
 const path = require('path')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
+const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
+
+const plugins = [
+    new HtmlWebpackPlugin({
+        template: './index.html'
+    }),
+];
+
+if (process.env.ANALYZE) {
+    plugins.push(new BundleAnalyzerPlugin());
+}
 
 module.exports = {
     mode: 'development',
@@ -9,11 +20,7 @@ module.exports = {
         path: path.resolve(__dirname, 'dist'),
         clean: true
     },
-    plugins: [
-        new HtmlWebpackPlugin({
-            template: './index.html'
-        })
-    ],
+    plugins: plugins,
     stats: {
         children: true
     },
@@ -41,13 +48,17 @@ module.exports = {
                 test: /\.ts$/,
                 use: 'ts-loader',
                 exclude: /node_modules/
+            },
+            {
+                test:/\.js$/,
+                exclude: /node_modules/,
+                use: {
+                    loader: 'babel-loader'
+                }
             }
         ]
     },
     resolve: {
         extensions: ['.ts', '.js']
     }
-  
-
-
 }
